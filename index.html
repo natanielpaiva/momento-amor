@@ -99,10 +99,10 @@
             flex-wrap: wrap;
         }
 
-        .time-box {
+        .time-unit {
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
             padding: 20px;
+            border-radius: 15px;
             min-width: 100px;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -112,8 +112,8 @@
             font-size: 3em;
             font-weight: bold;
             color: #fff;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
             display: block;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .time-label {
@@ -128,53 +128,26 @@
             margin-top: 40px;
             font-size: 1.2em;
             color: #fff;
-            font-weight: 300;
+            line-height: 1.6;
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
-
+        @media (max-width: 600px) {
             h1 {
                 font-size: 1.8em;
             }
-
-            .countdown {
-                gap: 10px;
-            }
-
-            .time-box {
+            
+            .time-unit {
                 min-width: 70px;
-                padding: 15px 10px;
+                padding: 15px;
             }
-
+            
             .time-value {
                 font-size: 2em;
             }
-
-            .time-label {
-                font-size: 0.7em;
-            }
-
+            
             .message {
                 font-size: 1em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .time-box {
-                min-width: 60px;
-                padding: 10px 5px;
-            }
-
-            .time-value {
-                font-size: 1.5em;
             }
         }
     </style>
@@ -183,88 +156,83 @@
     <div class="hearts-container" id="hearts"></div>
     
     <div class="container">
-        <h1 id="message">Falta apenas X dias para encontrar o amor da minha vida</h1>
+        <h1>Contagem Regressiva<br>Para Encontrar o Amor da Minha Vida</h1>
         
         <div class="countdown">
-            <div class="time-box">
-                <span class="time-value" id="days">00</span>
-                <span class="time-label">Dias</span>
+            <div class="time-unit">
+                <span class="time-value" id="days">0</span>
+                <div class="time-label">Dias</div>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="hours">00</span>
-                <span class="time-label">Horas</span>
+            <div class="time-unit">
+                <span class="time-value" id="hours">0</span>
+                <div class="time-label">Horas</div>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="minutes">00</span>
-                <span class="time-label">Minutos</span>
+            <div class="time-unit">
+                <span class="time-value" id="minutes">0</span>
+                <div class="time-label">Minutos</div>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="seconds">00</span>
-                <span class="time-label">Segundos</span>
+            <div class="time-unit">
+                <span class="time-value" id="seconds">0</span>
+                <div class="time-label">Segundos</div>
             </div>
         </div>
-
-        <div class="message">💕 Cada segundo que passa é um segundo mais perto 💕</div>
+        
+        <div class="message">
+            <p>✨ Cada segundo que passa é um segundo mais perto de você ✨</p>
+        </div>
     </div>
 
     <script>
-        // Data alvo: 22/01/2026 às 19:00 horário de Brasília (UTC-3)
-        const targetDate = new Date('2026-01-22T19:00:00-03:00');
+        // Data alvo: 31 de janeiro de 2026 às 23:59:59
+        const targetDate = new Date('2026-01-31T23:59:59').getTime();
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            document.getElementById('hearts').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 10000);
+        }
+
+        // Criar corações a cada 2 segundos
+        setInterval(createHeart, 2000);
+        
+        // Criar alguns corações iniciais
+        for(let i = 0; i < 5; i++) {
+            setTimeout(createHeart, i * 400);
+        }
 
         function updateCountdown() {
-            const now = new Date();
-            const difference = targetDate - now;
+            const now = new Date().getTime();
+            const distance = targetDate - now;
 
-            if (difference <= 0) {
-                document.getElementById('message').textContent = '💖 O momento chegou! 💖';
-                document.getElementById('days').textContent = '00';
-                document.getElementById('hours').textContent = '00';
-                document.getElementById('minutes').textContent = '00';
-                document.getElementById('seconds').textContent = '00';
+            if (distance < 0) {
+                document.querySelector('.container').innerHTML = `
+                    <h1>🎉 O momento chegou! 🎉</h1>
+                    <div class="message">
+                        <p>Este é o começo de uma história linda! ❤️</p>
+                    </div>
+                `;
                 return;
             }
 
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('days').textContent = String(days).padStart(2, '0');
-            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-
-            // Atualizar mensagem com dias corretos
-            const diasTexto = days === 1 ? 'dia' : 'dias';
-            document.getElementById('message').textContent = `Falta apenas ${days} ${diasTexto} para encontrar o amor da minha vida`;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
         }
 
-        // Criar corações flutuantes
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.textContent = '❤️';
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.animationDuration = (Math.random() * 5 + 8) + 's';
-            heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
-            heart.style.animationDelay = Math.random() * 5 + 's';
-            
-            document.getElementById('hearts').appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 15000);
-        }
-
-        // Criar corações periodicamente
-        setInterval(createHeart, 800);
-
-        // Criar alguns corações iniciais
-        for (let i = 0; i < 10; i++) {
-            setTimeout(createHeart, i * 300);
-        }
-
-        // Atualizar countdown a cada segundo
         updateCountdown();
         setInterval(updateCountdown, 1000);
     </script>
